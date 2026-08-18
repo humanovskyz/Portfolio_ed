@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>He — Edição de Vídeo</title>
+<meta name="description" content="Edição de vídeo com corte pensado pra reter. Portfólio de He Estúdio — reels, cortes e vídeos que prendem do primeiro segundo.">
+<link rel="icon" type="image/png" href="media/favicon.png">
+<link rel="icon" type="image/x-icon" href="media/favicon.ico">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="He — Edição de Vídeo">
+<meta property="og:description" content="Não busque a perfeição, projete-a. Edição de vídeo com corte pensado pra reter.">
+<meta property="og:image" content="media/og-image.jpg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="He — Edição de Vídeo">
+<meta name="twitter:description" content="Não busque a perfeição, projete-a. Edição de vídeo com corte pensado pra reter.">
+<meta name="twitter:image" content="media/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:wght@400;500;600&family=Jetbrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f8f6f1;
+    --ink: #0b0a09;
+    --ink-soft: #1d1b18;
+    --paper-line: rgba(11,10,9,0.14);
+    --muted-on-dark: rgba(248,246,241,0.45);
+    --accent: #b5391f;
+    --radius-panel: 48px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Cormorant Garamond', serif;
+    overflow-x:hidden;
+    cursor:default;
+  }
+
+  ::selection{ background:var(--accent); color:#fff; }
+  .display{ font-family:'Playfair Display', serif; }
+  .eyebrow{
+    font-family:'Jetbrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+  }
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- reveal-on-scroll utility ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .8s cubic-bezier(.22,.9,.3,1), transform .8s cubic-bezier(.22,.9,.3,1);
+  }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+  .reveal-delay-1{ transition-delay:.08s; }
+  .reveal-delay-2{ transition-delay:.16s; }
+  .reveal-delay-3{ transition-delay:.24s; }
+
+  /* ---------- signature: rec / timecode strip ---------- */
+  .rec-badge{
+    position:fixed; left:28px; bottom:24px; z-index:80;
+    display:flex; align-items:center; gap:8px;
+    font-family:'Jetbrains Mono', monospace; font-size:12px; letter-spacing:0.08em;
+    color:var(--ink); mix-blend-mode:difference; filter:invert(1);
+    pointer-events:none;
+  }
+  .rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); animation:blink 1.4s infinite; }
+  @keyframes blink{ 0%,45%{opacity:1;} 50%,95%{opacity:0.15;} 100%{opacity:1;} }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:70;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 40px;
+    opacity:0; transform:translateY(-12px);
+    transition:opacity .5s ease, transform .5s ease;
+    pointer-events:none; mix-blend-mode:difference;
+  }
+  .nav.visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .nav-mark{ font-size:24px; color:#fff; }
+  .nav-mark em{ font-style:italic; }
+  .nav-links{ display:flex; align-items:center; gap:28px; }
+  .nav-links a{
+    color:#fff; font-family:'Jetbrains Mono', monospace; font-size:11px;
+    letter-spacing:0.14em; text-transform:uppercase; opacity:.85;
+  }
+  .nav-links a:hover{ opacity:1; }
+  .nav-cta{
+    border:1px solid rgba(255,255,255,0.5) !important;
+    padding:9px 16px; border-radius:999px; opacity:1 !important;
+  }
+  .nav-cta:hover{ background:#fff; color:#000 !important; }
+
+  /* ---------- marquee ---------- */
+  .marquee-wrap{
+    border-top:1px solid var(--paper-line);
+    border-bottom:1px solid var(--paper-line);
+    overflow:hidden; padding:14px 0; background:var(--bg);
+    position:absolute; top:0; left:0; right:0; z-index:2;
+    will-change:transform, opacity;
+  }
+  .marquee-track{ display:flex; width:max-content; animation:scroll-left 32s linear infinite; }
+  .marquee-track span{
+    font-family:'Jetbrains Mono', monospace; font-size:13px; letter-spacing:0.1em;
+    text-transform:uppercase; padding:0 28px; white-space:nowrap;
+    display:flex; align-items:center; gap:28px;
+  }
+  .marquee-track span::after{ content:'✦'; color:var(--accent); font-size:10px; }
+  @keyframes scroll-left{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:92svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative; padding:60px 24px 120px;
+  }
+  .hero-mark{
+    font-size:clamp(96px, 22vw, 220px); line-height:0.85; letter-spacing:-0.02em;
+    will-change:transform, opacity;
+  }
+  .hero-mark em{ font-style:italic; }
+  .hero-cta{
+    margin-top:36px; font-family:'Playfair Display', serif; font-size:20px;
+    display:inline-flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--ink); padding-bottom:4px;
+    transition:opacity .3s ease, gap .3s ease;
+  }
+  .hero-cta:hover{ opacity:.6; gap:16px; }
+  .hero-watermark{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between;
+    padding:0 4vw; z-index:-1; pointer-events:none;
+  }
+  .hero-watermark span{
+    font-family:'Playfair Display', serif; font-size:min(46vw, 620px);
+    color:rgba(11,10,9,0.035); line-height:1; display:block; will-change:transform, opacity;
+  }
+
+  .into-panel{
+    background:var(--bg); text-align:center; padding:0 24px 0; position:relative; z-index:2;
+  }
+  .into-panel .mark-sm{ font-size:clamp(40px,6vw,64px); padding-top:8vh; }
+  .tagline{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:clamp(18px,2.4vw,26px);
+    color:var(--ink-soft); margin-top:14px; margin-bottom:8vh;
+  }
+
+  /* ---------- pinned projects panel ---------- */
+  .pin-wrapper{ position:relative; height:300svh; }
+  .panel{
+    position:sticky; top:0; height:100svh; overflow:hidden;
+    background:var(--ink); color:var(--bg);
+    border-radius:var(--radius-panel) var(--radius-panel) 0 0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:60px 5vw; z-index:3;
+    will-change:transform, border-radius;
+  }
+  .panel-heading{ text-align:center; font-size:clamp(34px,5vw,56px); margin-bottom:56px; }
+
+  .carousel{
+    position:relative; display:flex; align-items:center; justify-content:center; gap:24px;
+    max-width:1100px; margin:0 auto; width:100%;
+  }
+  .carousel-track{ display:flex; align-items:center; gap:28px; will-change:transform; transition:transform .6s cubic-bezier(.22,.9,.3,1); }
+  .carousel-viewport{ flex:1; overflow:hidden; position:relative; }
+  .project-card{
+    flex:0 0 auto; width:300px; height:380px; border-radius:22px;
+    background:linear-gradient(155deg, #fdfcfa, #e7e3da); color:var(--ink);
+    position:relative; overflow:hidden;
+    opacity:.35; transform:scale(.78);
+    transition:transform .5s cubic-bezier(.22,.9,.3,1), opacity .5s ease, filter .5s ease, box-shadow .5s ease;
+    filter:blur(0.5px);
+  }
+  .project-card.active{
+    opacity:1; transform:scale(1); filter:blur(0);
+    box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  }
+  .p-video{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  }
+  .project-card .p-index{
+    position:absolute; top:18px; left:18px; z-index:2;
+    font-family:'Jetbrains Mono', monospace; font-size:11px; letter-spacing:0.12em; color:var(--accent);
+  }
+  .project-card:not(:has(.p-video)) .p-index{ color:var(--accent); }
+  .project-card:has(.p-video) .p-index{ color:#fff; text-shadow:0 1px 6px rgba(0,0,0,0.6); }
+  .project-card .p-play{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:48px; height:48px; border-radius:50%; z-index:2;
+    border:1px solid var(--ink); background:rgba(255,255,255,0.65);
+    display:flex; align-items:center; justify-content:center;
+    opacity:.7; cursor:pointer; transition:opacity .3s ease, background .3s ease;
+  }
+  .project-card:has(.p-video) .p-play{
+    border-color:#fff; background:rgba(0,0,0,0.35); color:#fff; opacity:1;
+  }
+  .project-card.playing .p-play{ opacity:0; pointer-events:none; }
+  .p-meta{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:36px 22px 20px;
+  }
+  .project-card:has(.p-video) .p-meta{
+    background:linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0));
+  }
+  .project-card.playing .p-meta{ opacity:0; transition:opacity .3s ease; }
+  .project-card .p-title{
+    font-family:'Playfair Display', serif; font-size:20px;
+  }
+  .project-card:has(.p-video) .p-title{ color:#fff; }
+  .project-card .p-tag{
+    font-family:'Jetbrains Mono', monospace; font-size:10px; letter-spacing:0.1em;
+    text-transform:uppercase; opacity:.55;
+  }
+  .project-card:has(.p-video) .p-tag{ color:#fff; }
+  .car-arrow{
+    width:46px; height:46px; border-radius:50%; border:1px solid rgba(248,246,241,0.3);
+    display:flex; align-items:center; justify-content:center; color:var(--bg); flex:0 0 auto;
+    transition:border-color .3s ease, background .3s ease; background:none; cursor:pointer;
+  }
+  .car-arrow:hover{ border-color:var(--bg); background:rgba(248,246,241,0.08); }
+  .carousel-hint{
+    text-align:center; margin-top:36px; font-family:'Jetbrains Mono', monospace; font-size:11px;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--muted-on-dark);
+  }
+  .progress-dots{ display:flex; gap:7px; justify-content:center; margin-top:20px; }
+  .progress-dots span{ width:5px; height:5px; border-radius:50%; background:rgba(248,246,241,0.25); transition:background .3s ease, transform .3s ease; }
+  .progress-dots span.active{ background:var(--accent); transform:scale(1.4); }
+
+  /* ---------- value strip ---------- */
+  .value-strip{
+    background:var(--bg); padding:110px 6vw; display:grid; grid-template-columns:repeat(3, 1fr); gap:48px;
+  }
+  .value-item .v-num{ font-family:'Jetbrains Mono', monospace; font-size:11px; color:var(--accent); letter-spacing:0.1em; }
+  .value-item h3{ font-family:'Playfair Display', serif; font-weight:500; font-size:24px; margin:14px 0 10px; }
+  .value-item p{ font-size:17px; color:var(--ink-soft); line-height:1.5; }
+
+  /* ---------- how it works / friction reducer ---------- */
+  .steps-section{ background:var(--bg); padding:0 6vw 120px; }
+  .steps-heading{ text-align:center; font-size:clamp(30px,4.4vw,46px); margin-bottom:60px; }
+  .steps-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:36px; max-width:1100px; margin:0 auto; }
+  .step-item{ border-top:1px solid var(--paper-line); padding-top:20px; }
+  .step-item .v-num{ font-family:'Jetbrains Mono', monospace; font-size:11px; color:var(--accent); letter-spacing:0.1em; }
+  .step-item h4{ font-family:'Playfair Display', serif; font-size:21px; margin:10px 0 8px; }
+  .step-item p{ font-size:16px; color:var(--ink-soft); line-height:1.5; }
+
+  /* ---------- contact panel (pinned zoom) ---------- */
+  .contact-pin-wrapper{ position:relative; height:180svh; }
+  .contact-panel{
+    position:sticky; top:0; height:100svh; overflow:hidden;
+    background:var(--ink); color:var(--bg);
+    border-radius:var(--radius-panel) var(--radius-panel) 0 0;
+    display:flex; align-items:center; justify-content:center;
+    padding:60px 6vw; text-align:center;
+    will-change:transform, border-radius;
+  }
+  .contact-watermark{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between;
+    padding:0 3vw; z-index:0; pointer-events:none;
+  }
+  .contact-watermark span{
+    font-family:'Playfair Display', serif; font-size:min(40vw,520px);
+    color:rgba(248,246,241,0.045); line-height:1; display:block; will-change:transform;
+  }
+  .contact-inner{ position:relative; z-index:1; }
+  .contact-eyebrow{ color:var(--muted-on-dark); margin-bottom:18px; }
+  .contact-title{ font-size:clamp(38px,6vw,72px); margin-bottom:22px; }
+  .contact-sub{ font-style:italic; font-size:clamp(16px,2vw,20px); color:rgba(248,246,241,0.65); margin-bottom:36px; }
+  .contact-cta{
+    font-family:'Playfair Display', serif; font-size:clamp(24px,3.4vw,34px); display:inline-block;
+    border-bottom:1px solid rgba(248,246,241,0.4); padding-bottom:6px; margin-bottom:14px;
+    transition:opacity .3s ease;
+  }
+  .contact-cta:hover{ opacity:.6; }
+  .contact-icons{ display:flex; justify-content:center; gap:18px; margin-top:30px; }
+  .contact-icons a{
+    width:56px; height:56px; border-radius:16px; background:var(--bg); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; transition:transform .3s ease;
+  }
+  .contact-icons a:hover{ transform:translateY(-4px); }
+
+  footer{
+    text-align:center; padding:26px; font-family:'Jetbrains Mono', monospace; font-size:10px;
+    letter-spacing:0.1em; color:var(--muted-on-dark); background:var(--ink); position:relative; z-index:1;
+  }
+
+  @media (max-width:760px){
+    .value-strip{ grid-template-columns:1fr; }
+    .steps-grid{ grid-template-columns:1fr; }
+    .nav{ padding:18px 20px; }
+    .nav-links{ gap:16px; }
+    .project-card{ width:220px; height:290px; }
+    .rec-badge{ display:none; }
+    .pin-wrapper{ height:260svh; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .marquee-track{ animation:none; }
+    .rec-dot{ animation:none; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="rec-badge">
+    <span class="rec-dot"></span>
+    <span id="timecode">REC 00:00:00:00</span>
+  </div>
+
+  <nav class="nav" id="siteNav">
+    <a href="#top" class="nav-mark display">H<em>e</em></a>
+    <div class="nav-links">
+      <a href="#projetos">Projetos</a>
+      <a href="#valor">Diferenciais</a>
+      <a href="#contato" class="nav-cta">Contato</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-watermark" id="heroWatermark"><span>H</span><span><em>e</em></span></div>
+    <div class="marquee-wrap" id="marqueeWrap">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+    <h1 class="hero-mark display" id="heroMark">H<em>e</em></h1>
+    <a href="#inicial" class="hero-cta">Ver projetos ↓</a>
+  </section>
+
+  <!-- TRANSITION STRIP -->
+  <section class="into-panel" id="inicial">
+    <h2 class="mark-sm display reveal">H<em>e</em></h2>
+    <p class="tagline reveal reveal-delay-1">Não busque a perfeição, projete-a</p>
+  </section>
+
+  <!-- PROJECTS PANEL (pinned scroll-scrub) -->
+  <div class="pin-wrapper" id="pinWrapper">
+    <section class="panel" id="projetos">
+      <h2 class="panel-heading display">Projetos</h2>
+      <div class="carousel">
+        <button class="car-arrow" id="prevBtn" aria-label="Projeto anterior">‹</button>
+        <div class="carousel-viewport">
+          <div class="carousel-track" id="carTrack"></div>
+        </div>
+        <button class="car-arrow" id="nextBtn" aria-label="Próximo projeto">›</button>
+      </div>
+      <div class="progress-dots" id="progressDots"></div>
+      <p class="carousel-hint" id="carouselHint">Mais projetos em breve</p>
+    </section>
+  </div>
+
+  <!-- VALUE STRIP -->
+  <section class="value-strip" id="valor">
+    <div class="value-item reveal">
+      <span class="eyebrow v-num">01</span>
+      <h3 class="display">Entrega rápida</h3>
+      <p>Prazos claros combinados antes de começar, e cumpridos — sem enrolação, sem sumiço.</p>
+    </div>
+    <div class="value-item reveal reveal-delay-1">
+      <span class="eyebrow v-num">02</span>
+      <h3 class="display">Corte pensado pra reter</h3>
+      <p>Ritmo, cortes e chamadas construídos pra segurar quem assiste até o fim.</p>
+    </div>
+    <div class="value-item reveal reveal-delay-2">
+      <span class="eyebrow v-num">03</span>
+      <h3 class="display">Comunicação direta</h3>
+      <p>Você fala comigo, não com uma fila de atendimento. Ajustes rápidos, sem burocracia.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS (friction reducer) -->
+  <section class="steps-section" id="como-funciona">
+    <h2 class="steps-heading display reveal">Contratar é simples</h2>
+    <div class="steps-grid">
+      <div class="step-item reveal">
+        <span class="v-num">01</span>
+        <h4 class="display">Você me chama</h4>
+        <p>Manda o material bruto e me conta o objetivo do vídeo pelo Instagram.</p>
+      </div>
+      <div class="step-item reveal reveal-delay-1">
+        <span class="v-num">02</span>
+        <h4 class="display">Eu edito</h4>
+        <p>Corte, ritmo e legendas pensados pra reter — com prazo combinado antes de começar.</p>
+      </div>
+      <div class="step-item reveal reveal-delay-2">
+        <span class="v-num">03</span>
+        <h4 class="display">Você aprova</h4>
+        <p>Ajustes rápidos se precisar, e o vídeo pronto pra postar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT PANEL (pinned zoom) -->
+  <div class="contact-pin-wrapper" id="contactPinWrapper">
+    <section class="contact-panel" id="contato">
+      <div class="contact-watermark" id="contactWatermark"><span>H</span><span><em>e</em></span></div>
+      <div class="contact-inner">
+        <p class="eyebrow contact-eyebrow">Vamos trabalhar juntos</p>
+        <h2 class="contact-title display">Tem algum projeto em mente?</h2>
+        <p class="contact-sub">Me conta o que você precisa e eu te respondo com um plano — sem compromisso.</p>
+        <a href="https://instagram.com/hestudio___" target="_blank" rel="noopener" class="contact-cta display" id="mainCta">Conte-me um pouco do seu projeto</a>
+        <div class="contact-icons">
+          <a href="https://instagram.com/hestudio___" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>He — Edição de Vídeo</footer>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function clamp01(v){ return Math.min(1, Math.max(0, v)); }
+
+  // ---------- content data ----------
+  const marqueePhrases = [
+    "Edição que prende do primeiro segundo",
+    "Do bruto ao pronto pra postar",
+    "Cortes pensados pra reter",
+    "Entrega no prazo combinado",
+    "Vídeo é a nova vitrine",
+    "Fale comigo, não com um robô"
+  ];
+  const projects = [
+    { title: "Projeto 01", tag: "Reels · Cortes", video: "media/projeto-01.mp4", poster: "media/projeto-01-poster.jpg" }
+    // Adicione os próximos aqui conforme forem ficando prontos, seguindo o mesmo padrão:
+    // { title: "Projeto 02", tag: "Reels · Cortes", video: "media/projeto-02.mp4", poster: "media/projeto-02-poster.jpg" },
+  ];
+
+  // ---------- marquee ----------
+  const track = document.getElementById('marqueeTrack');
+  const loopContent = [...marqueePhrases, ...marqueePhrases].map(p => `<span>${p}</span>`).join('');
+  track.innerHTML = loopContent + loopContent;
+
+  // ---------- nav visibility ----------
+  const nav = document.getElementById('siteNav');
+  const heroEl = document.getElementById('top');
+
+  // ---------- carousel ----------
+  const carTrack = document.getElementById('carTrack');
+  const carouselViewport = document.querySelector('.carousel-viewport');
+  const dotsWrap = document.getElementById('progressDots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const carouselHint = document.getElementById('carouselHint');
+  let activeIndex = 0;
+
+  // with a single project, navigation controls are just noise — hide them.
+  // they reappear automatically the moment a second project is added above.
+  if (projects.length <= 1){
+    prevBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    dotsWrap.style.display = 'none';
+    carouselHint.style.display = 'none';
+  }
+
+  function centerActiveCard(){
+    const activeEl = carTrack.querySelector('.project-card.active');
+    if (!activeEl) return;
+    const viewportWidth = carouselViewport.clientWidth;
+    const cardCenter = activeEl.offsetLeft + activeEl.offsetWidth / 2;
+    const offset = viewportWidth / 2 - cardCenter;
+    carTrack.style.transform = `translateX(${offset}px)`;
+  }
+
+  function buildCarousel(){
+    carTrack.innerHTML = projects.map((p, i) => `
+      <div class="project-card" data-index="${i}">
+        ${p.video ? `<video class="p-video" src="${p.video}" poster="${p.poster || ''}" playsinline preload="none"></video>` : ''}
+        <span class="p-index">0${i+1} / 0${projects.length}</span>
+        <button class="p-play" aria-label="Reproduzir">▶</button>
+        <div class="p-meta">
+          <div class="p-title display">${p.title}</div>
+          <div class="p-tag">${p.tag}</div>
+        </div>
+      </div>
+    `).join('');
+    dotsWrap.innerHTML = projects.map(() => `<span></span>`).join('');
+    updateActive();
+  }
+
+  // toggles which card/dot is active without recreating any DOM —
+  // this is what keeps the transition smooth instead of jumping/stuttering
+  function updateActive(){
+    carTrack.querySelectorAll('.project-card').forEach((el, i) => {
+      const isActive = i === activeIndex;
+      el.classList.toggle('active', isActive);
+      if (!isActive){
+        el.classList.remove('playing');
+        const v = el.querySelector('.p-video');
+        if (v) v.pause();
+      }
+    });
+    dotsWrap.querySelectorAll('span').forEach((el, i) => {
+      el.classList.toggle('active', i === activeIndex);
+    });
+    requestAnimationFrame(centerActiveCard);
+  }
+  buildCarousel();
+  window.addEventListener('resize', centerActiveCard);
+
+  // play/pause on click (button or the video itself)
+  carTrack.addEventListener('click', (e) => {
+    const card = e.target.closest('.project-card');
+    if (!card || !card.classList.contains('active')) return;
+    const video = card.querySelector('.p-video');
+    if (!video) return;
+    if (video.paused){
+      video.play();
+      card.classList.add('playing');
+    } else {
+      video.pause();
+      card.classList.remove('playing');
+    }
+  });
+
+  // keeps manual navigation and scroll position in sync, so scrolling
+  // afterwards continues from where the user left off instead of snapping back.
+  // the page scroll jumps instantly here — the carousel's own CSS transitions
+  // (translateX on the track, scale/opacity on the cards) are what create the
+  // smooth motion, so we don't want the browser's native smooth-scroll animation
+  // fighting with it at the same time.
+  function scrollToIndex(i){
+    activeIndex = i;
+    updateActive();
+    const pinTotal = pinWrapper.offsetHeight - window.innerHeight;
+    if (pinTotal <= 0) return;
+    const carouselProgress = (i + 0.5) / projects.length;
+    const pinProgress = 0.22 + carouselProgress * 0.78;
+    const targetScrollY = pinWrapper.offsetTop + pinProgress * pinTotal;
+    window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    scrollToIndex((activeIndex - 1 + projects.length) % projects.length);
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    scrollToIndex((activeIndex + 1) % projects.length);
+  });
+
+  // ---------- touch swipe on carousel ----------
+  let touchStartX = 0;
+  const carouselEl = document.querySelector('.carousel');
+  carouselEl.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  carouselEl.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 40) return;
+    const next = dx < 0
+      ? (activeIndex + 1) % projects.length
+      : (activeIndex - 1 + projects.length) % projects.length;
+    scrollToIndex(next);
+  }, { passive: true });
+
+  // ---------- reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  if (!reduceMotion && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('in-view');
+      });
+    }, { threshold: 0.2 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in-view'));
+  }
+
+  // ---------- scroll-driven "Nike style" animations ----------
+  const heroMark = document.getElementById('heroMark');
+  const heroWatermark = document.getElementById('heroWatermark');
+  const marqueeWrap = document.getElementById('marqueeWrap');
+  const pinWrapper = document.getElementById('pinWrapper');
+  const projectsPanel = document.getElementById('projetos');
+  const contactPinWrapper = document.getElementById('contactPinWrapper');
+  const contactPanel = document.getElementById('contato');
+  const contactWatermark = document.getElementById('contactWatermark');
+
+  let ticking = false;
+
+  function updateScrollFx(){
+    const scrollY = window.scrollY;
+    const vh = window.innerHeight;
+
+    // -- Hero: zoom out + rise on exit --
+    if (!reduceMotion){
+      const heroProgress = clamp01(scrollY / (heroEl.offsetHeight * 0.9));
+      heroMark.style.transform = `scale(${1 - heroProgress * 0.38}) translateY(${-heroProgress * 70}px)`;
+      heroMark.style.opacity = String(1 - heroProgress * 0.85);
+      marqueeWrap.style.transform = `translateY(${-heroProgress * 46}px)`;
+      marqueeWrap.style.opacity = String(1 - heroProgress * 1.3);
+      const wSpans = heroWatermark.children;
+      wSpans[0].style.transform = `translateX(${-heroProgress * 90}px) scale(${1 + heroProgress * 0.15})`;
+      wSpans[1].style.transform = `translateX(${heroProgress * 90}px) scale(${1 + heroProgress * 0.15})`;
+    }
+
+    // -- Projects: pinned zoom-in dock + scroll-scrubbed carousel --
+    const pinRect = pinWrapper.getBoundingClientRect();
+    const pinTotal = pinWrapper.offsetHeight - vh;
+    const pinProgress = clamp01((-pinRect.top) / Math.max(pinTotal, 1));
+
+    if (!reduceMotion){
+      const dockProgress = clamp01(pinProgress / 0.22);
+      const scale = 0.92 + dockProgress * 0.08;
+      const radius = 64 - dockProgress * 24;
+      projectsPanel.style.transform = `scale(${scale})`;
+      projectsPanel.style.borderRadius = `${radius}px ${radius}px 0 0`;
+    }
+
+    if (pinRect.top < vh && pinRect.bottom > 0){
+      const carouselProgress = clamp01((pinProgress - 0.22) / 0.78);
+      const newIndex = Math.min(projects.length - 1, Math.floor(carouselProgress * projects.length));
+      if (newIndex !== activeIndex){
+        activeIndex = newIndex;
+        updateActive();
+      }
+    }
+
+    // -- Contact: pinned zoom-in dock + watermark parallax spread --
+    const contactRect = contactPinWrapper.getBoundingClientRect();
+    const contactTotal = contactPinWrapper.offsetHeight - vh;
+    const contactProgress = clamp01((-contactRect.top) / Math.max(contactTotal, 1));
+
+    if (!reduceMotion){
+      const dockP = clamp01(contactProgress / 0.5);
+      const scale = 0.9 + dockP * 0.1;
+      const radius = 72 - dockP * 24;
+      contactPanel.style.transform = `scale(${scale})`;
+      contactPanel.style.borderRadius = `${radius}px ${radius}px 0 0`;
+      const cSpans = contactWatermark.children;
+      cSpans[0].style.transform = `translateX(${-dockP * 60}px)`;
+      cSpans[1].style.transform = `translateX(${dockP * 60}px)`;
+    }
+
+    // -- nav visibility --
+    nav.classList.toggle('visible', scrollY > vh * 0.55);
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking){
+      requestAnimationFrame(updateScrollFx);
+      ticking = true;
+    }
+  }, { passive: true });
+  updateScrollFx();
+
+  // ---------- signature: live "rolling" timecode ----------
+  let frame = 0;
+  const tc = document.getElementById('timecode');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    frame++;
+    const totalSeconds = Math.floor(frame / 30);
+    const h = pad(Math.floor(totalSeconds/3600));
+    const m = pad(Math.floor((totalSeconds%3600)/60));
+    const s = pad(totalSeconds%60);
+    const f = pad(frame % 30);
+    tc.textContent = `REC ${h}:${m}:${s}:${f}`;
+    requestAnimationFrame(tick);
+  }
+  if (!reduceMotion) requestAnimationFrame(tick);
+</script>
+</body>
+</html>
