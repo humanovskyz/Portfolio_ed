@@ -202,6 +202,7 @@
     }
     .project.reverse{ grid-template-columns:minmax(280px,420px) minmax(0,1fr); }
     .project.reverse .project-media{ order:-1; }
+    .project.wide{ grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr); }
     .project-number{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--red); margin-bottom:24px; }
     .project-label{
       display:inline-flex; align-items:center; gap:9px; margin-bottom:19px; padding:8px 11px;
@@ -216,7 +217,15 @@
       padding:8px 11px; border-bottom:1px solid var(--line-strong);
       font-family:var(--mono); font-size:8px; letter-spacing:.13em; text-transform:uppercase; color:rgba(242,239,234,.68);
     }
+    .project-external{
+      display:inline-flex; align-items:center; gap:10px; margin-top:28px; padding-bottom:7px;
+      color:var(--paper); border-bottom:1px solid rgba(223,36,31,.6);
+      font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+      transition:color .2s,border-color .2s;
+    }
+    .project-external:hover{ color:var(--red); border-color:var(--red); }
     .project-media{ position:relative; width:min(100%,390px); justify-self:center; }
+    .project.wide .project-media{ width:100%; max-width:720px; }
     .project-media::before{
       content:''; position:absolute; inset:22px -22px -22px 22px; z-index:0;
       border:1px solid rgba(223,36,31,.28); border-radius:30px;
@@ -226,6 +235,9 @@
       background:#09090a; border:1px solid var(--line); box-shadow:0 35px 100px rgba(0,0,0,.48);
     }
     .project-video{ display:block; width:100%; height:100%; object-fit:cover; background:#080809; }
+    .youtube-shell{ aspect-ratio:16/9; }
+    .youtube-thumb{ display:block; width:100%; height:100%; object-fit:cover; background:#080809; }
+    .youtube-frame{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#080809; }
     .video-cover{
       position:absolute; inset:0; display:flex; align-items:flex-end; padding:20px;
       background:linear-gradient(to top,rgba(3,3,4,.86),transparent 54%);
@@ -348,7 +360,7 @@
       .hero-bottom{ grid-template-columns:1fr; }
       .hero-actions{ justify-content:flex-start; flex-wrap:wrap; }
       .section-head{ grid-template-columns:1fr; gap:18px; }
-      .project,.project.reverse{ grid-template-columns:1fr; }
+      .project,.project.reverse,.project.wide{ grid-template-columns:1fr; }
       .project.reverse .project-media{ order:initial; }
       .project-media{ width:min(100%,350px); margin-top:10px; }
       .about-grid{ grid-template-columns:1fr; }
@@ -482,6 +494,31 @@
               </div>
             </div>
           </article>
+
+          <article class="project wide">
+            <div class="project-info reveal">
+              <p class="project-number">PR — 003</p>
+              <span class="project-label">Publicado no YouTube</span>
+              <h3 class="project-title">Onde Está Todo Mundo no Minecraft?</h3>
+              <p class="project-copy">Projeto em formato long form construído para o YouTube, com foco em narrativa, ritmo, ambientação e progressão visual dentro do universo de Minecraft.</p>
+              <div class="project-tags" aria-label="Características do projeto">
+                <span>Long form</span><span>Gaming</span><span>Storytelling</span>
+              </div>
+              <a class="project-external" href="https://www.youtube.com/watch?v=FORbewSgl-g" target="_blank" rel="noopener">Abrir no YouTube <span aria-hidden="true">↗</span></a>
+            </div>
+
+            <div class="project-media reveal delay-1">
+              <div class="video-shell youtube-shell" data-youtube-id="FORbewSgl-g" data-youtube-title="Onde Está Todo Mundo no Minecraft?">
+                <img class="youtube-thumb" src="https://i.ytimg.com/vi/FORbewSgl-g/maxresdefault.jpg" alt="Capa do vídeo Onde Está Todo Mundo no Minecraft?" loading="lazy" width="1280" height="720">
+                <div class="video-cover">
+                  <button class="video-play youtube-play" type="button" aria-label="Assistir Onde Está Todo Mundo no Minecraft?">
+                    <span class="play-icon" aria-hidden="true">▶</span>
+                    <span class="play-copy"><small>Projeto 03</small><span>Assistir no site</span></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -589,7 +626,7 @@
       revealEls.forEach(el => el.classList.add('in-view'));
     }
 
-    const videoShells = document.querySelectorAll('.video-shell');
+    const videoShells = document.querySelectorAll('.video-shell:not(.youtube-shell)');
     videoShells.forEach(shell => {
       const video = shell.querySelector('video');
       const button = shell.querySelector('.video-play');
@@ -628,6 +665,22 @@
         shell.classList.remove('playing');
         document.body.classList.remove('media-playing');
       });
+    });
+
+    document.querySelectorAll('.youtube-shell').forEach(shell => {
+      const button = shell.querySelector('.youtube-play');
+      button.addEventListener('click', () => {
+        const frame = document.createElement('iframe');
+        frame.className = 'youtube-frame';
+        frame.src = `https://www.youtube-nocookie.com/embed/${shell.dataset.youtubeId}?autoplay=1&rel=0`;
+        frame.title = shell.dataset.youtubeTitle;
+        frame.loading = 'lazy';
+        frame.referrerPolicy = 'strict-origin-when-cross-origin';
+        frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        frame.allowFullscreen = true;
+        shell.replaceChildren(frame);
+        shell.classList.add('playing');
+      }, { once:true });
     });
 
     const cursorDot = document.getElementById('cursorDot');
