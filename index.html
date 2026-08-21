@@ -151,6 +151,80 @@
     color:var(--ink-soft); margin-top:14px; margin-bottom:8vh;
   }
 
+  /* ---------- brand film ---------- */
+  .brand-film{
+    position:relative; overflow:hidden; background:var(--bg);
+    padding:clamp(72px,10vw,132px) 6vw clamp(96px,13vw,168px);
+    border-top:1px solid var(--paper-line);
+  }
+  .brand-film::before{
+    content:'He'; position:absolute; left:-.04em; bottom:-.27em;
+    font-family:'Playfair Display', serif; font-style:italic;
+    font-size:clamp(180px,34vw,520px); line-height:1;
+    color:rgba(11,10,9,.025); pointer-events:none;
+  }
+  .brand-film-grid{
+    position:relative; z-index:1; width:min(1160px,100%); margin:0 auto;
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,410px);
+    align-items:center; gap:clamp(56px,9vw,136px);
+  }
+  .film-eyebrow{ color:var(--accent); margin-bottom:22px; }
+  .brand-film-title{
+    max-width:720px; font-size:clamp(42px,6.4vw,82px); font-weight:500;
+    letter-spacing:-.035em; line-height:.98;
+  }
+  .brand-film-copy{
+    max-width:570px; margin-top:28px; color:var(--ink-soft);
+    font-size:clamp(18px,2vw,22px); line-height:1.48;
+  }
+  .film-note{
+    display:flex; align-items:center; gap:14px; margin-top:34px;
+    font-family:'Jetbrains Mono', monospace; font-size:10px;
+    letter-spacing:.12em; text-transform:uppercase; color:rgba(11,10,9,.58);
+  }
+  .film-note::before{ content:''; width:42px; height:1px; background:var(--accent); }
+  .film-stage{ position:relative; width:min(100%,380px); justify-self:center; }
+  .film-stage::before{
+    content:''; position:absolute; inset:18px -18px -18px 18px;
+    border:1px solid var(--paper-line); border-radius:30px; z-index:-1;
+  }
+  .film-frame{
+    position:relative; aspect-ratio:9/16; overflow:hidden; background:var(--ink);
+    border-radius:26px; box-shadow:0 34px 80px rgba(11,10,9,.2);
+  }
+  .brand-video{ width:100%; height:100%; display:block; object-fit:cover; }
+  .film-overlay{
+    position:absolute; inset:0; display:flex; align-items:flex-end; padding:22px;
+    background:linear-gradient(to top, rgba(11,10,9,.78) 0%, rgba(11,10,9,0) 52%);
+    transition:opacity .2s ease, visibility 0s linear 0s; pointer-events:none;
+  }
+  .film-play{
+    pointer-events:auto; width:100%; border:1px solid rgba(248,246,241,.38);
+    border-radius:999px; padding:10px 14px 10px 10px; background:rgba(11,10,9,.78);
+    color:var(--bg); cursor:pointer;
+    display:flex; align-items:center; gap:12px; text-align:left;
+    transition:background .25s ease, border-color .25s ease, transform .25s ease;
+  }
+  .film-play:hover{ background:rgba(11,10,9,.72); border-color:var(--bg); transform:translateY(-2px); }
+  .film-play:disabled{ cursor:wait; transform:none; opacity:.8; }
+  .film-play:focus-visible{ outline:2px solid var(--accent); outline-offset:4px; }
+  .film-play-icon{
+    width:42px; height:42px; border-radius:50%; flex:0 0 auto;
+    display:grid; place-items:center; padding-left:2px; background:var(--bg); color:var(--ink);
+    font-size:13px;
+  }
+  .film-play-label{
+    display:flex; flex-direction:column; gap:3px; font-family:'Jetbrains Mono', monospace;
+    font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  }
+  .film-play-label small{ color:rgba(248,246,241,.62); font-size:9px; letter-spacing:.14em; }
+  .film-stage.is-playing .film-overlay{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .2s ease, visibility 0s linear .2s;
+  }
+  body.film-active .marquee-track,
+  body.film-active .rec-dot{ animation-play-state:paused; }
+
   /* ---------- pinned projects panel ---------- */
   .pin-wrapper{ position:relative; height:300svh; }
   .panel{
@@ -297,6 +371,11 @@
     .project-card{ width:220px; height:290px; }
     .rec-badge{ display:none; }
     .pin-wrapper{ height:260svh; }
+    .brand-film{ padding-left:24px; padding-right:24px; }
+    .brand-film-grid{ grid-template-columns:1fr; gap:52px; }
+    .brand-film-copy{ font-size:18px; }
+    .film-stage{ width:min(100%,330px); }
+    .film-stage::before{ inset:12px -12px -12px 12px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -304,6 +383,7 @@
     .marquee-track{ animation:none; }
     .rec-dot{ animation:none; }
     .reveal{ opacity:1; transform:none; transition:none; }
+    .film-overlay, .film-play{ transition:none; }
   }
 </style>
 </head>
@@ -317,8 +397,8 @@
   <nav class="nav" id="siteNav">
     <a href="#top" class="nav-mark display">H<em>e</em></a>
     <div class="nav-links">
+      <a href="#sobre">Filme</a>
       <a href="#projetos">Projetos</a>
-      <a href="#valor">Diferenciais</a>
       <a href="#contato" class="nav-cta">Contato</a>
     </div>
   </nav>
@@ -330,13 +410,47 @@
       <div class="marquee-track" id="marqueeTrack"></div>
     </div>
     <h1 class="hero-mark display" id="heroMark">H<em>e</em></h1>
-    <a href="#inicial" class="hero-cta">Ver projetos ↓</a>
+    <a href="#sobre" class="hero-cta">Conheça a He ↓</a>
   </section>
 
   <!-- TRANSITION STRIP -->
   <section class="into-panel" id="inicial">
     <h2 class="mark-sm display reveal">H<em>e</em></h2>
     <p class="tagline reveal reveal-delay-1">Não busque a perfeição, projete-a</p>
+  </section>
+
+  <!-- BRAND FILM: apresenta a He antes das provas de trabalho -->
+  <section class="brand-film" id="sobre" aria-labelledby="brandFilmTitle">
+    <div class="brand-film-grid">
+      <div class="brand-film-intro">
+        <p class="eyebrow film-eyebrow reveal">Filme da marca / 00:33</p>
+        <h2 class="brand-film-title display reveal reveal-delay-1" id="brandFilmTitle">O que é a He, em 33 segundos.</h2>
+        <p class="brand-film-copy reveal reveal-delay-2">Ideia, ritmo e identidade transformados em vídeos que prendem. Dê o play e conheça a visão por trás de cada corte antes de explorar os projetos.</p>
+        <p class="film-note reveal reveal-delay-3">Assista com som</p>
+      </div>
+
+      <div class="film-stage reveal reveal-delay-2" id="brandFilmStage">
+        <div class="film-frame">
+          <video
+            class="brand-video"
+            id="brandFilm"
+            src="media/Promocional_He.mp4?v=2"
+            poster="media/promocional-he-poster.jpg"
+            playsinline
+            preload="auto"
+            width="540"
+            height="960"
+            aria-label="Filme promocional da He, com 33 segundos">
+          </video>
+          <div class="film-overlay">
+            <button class="film-play" id="brandFilmPlay" type="button" aria-label="Assistir ao filme da He com som">
+              <span class="film-play-icon" aria-hidden="true">▶</span>
+              <span class="film-play-label"><small>Conheça a He</small><span id="brandFilmPlayText">Assistir agora · 00:33</span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- PROJECTS PANEL (pinned scroll-scrub) -->
@@ -434,6 +548,53 @@
     // Adicione os próximos aqui conforme forem ficando prontos, seguindo o mesmo padrão:
     // { title: "Projeto 02", tag: "Reels · Cortes", video: "media/projeto-02.mp4", poster: "media/projeto-02-poster.jpg" },
   ];
+
+  // ---------- brand film ----------
+  const brandFilm = document.getElementById('brandFilm');
+  const brandFilmStage = document.getElementById('brandFilmStage');
+  const brandFilmPlay = document.getElementById('brandFilmPlay');
+  const brandFilmPlayText = document.getElementById('brandFilmPlayText');
+
+  function setFilmLoading(isLoading){
+    brandFilmStage.classList.toggle('is-loading', isLoading);
+    brandFilmPlay.disabled = isLoading;
+    brandFilmPlayText.textContent = isLoading ? 'Carregando vídeo…' : 'Assistir agora · 00:33';
+  }
+
+  brandFilmPlay.addEventListener('click', async () => {
+    setFilmLoading(true);
+    brandFilm.controls = true;
+    try {
+      await brandFilm.play();
+    } catch (_) {
+      setFilmLoading(false);
+      brandFilm.controls = false;
+      brandFilmStage.classList.remove('is-playing');
+    }
+  });
+  brandFilm.addEventListener('playing', () => {
+    setFilmLoading(false);
+    brandFilmStage.classList.add('is-playing');
+    document.body.classList.add('film-active');
+  });
+  brandFilm.addEventListener('waiting', () => {
+    if (!brandFilm.paused){
+      brandFilmStage.classList.remove('is-playing');
+      setFilmLoading(true);
+    }
+  });
+  brandFilm.addEventListener('pause', () => document.body.classList.remove('film-active'));
+  brandFilm.addEventListener('ended', () => {
+    setFilmLoading(false);
+    brandFilm.controls = false;
+    brandFilm.currentTime = 0;
+    brandFilmStage.classList.remove('is-playing');
+    document.body.classList.remove('film-active');
+  });
+  brandFilm.addEventListener('error', () => {
+    setFilmLoading(false);
+    brandFilmPlayText.textContent = 'Não foi possível carregar';
+  });
 
   // ---------- marquee ----------
   const track = document.getElementById('marqueeTrack');
@@ -655,20 +816,22 @@
   updateScrollFx();
 
   // ---------- signature: live "rolling" timecode ----------
-  let frame = 0;
   const tc = document.getElementById('timecode');
   function pad(n){ return String(n).padStart(2,'0'); }
-  function tick(){
-    frame++;
-    const totalSeconds = Math.floor(frame / 30);
+  const tcStartedAt = performance.now();
+  function updateTimecode(){
+    const elapsed = performance.now() - tcStartedAt;
+    const totalSeconds = Math.floor(elapsed / 1000);
     const h = pad(Math.floor(totalSeconds/3600));
     const m = pad(Math.floor((totalSeconds%3600)/60));
     const s = pad(totalSeconds%60);
-    const f = pad(frame % 30);
+    const f = pad(Math.floor((elapsed % 1000) / (1000 / 30)));
     tc.textContent = `REC ${h}:${m}:${s}:${f}`;
-    requestAnimationFrame(tick);
   }
-  if (!reduceMotion) requestAnimationFrame(tick);
+  if (!reduceMotion){
+    updateTimecode();
+    setInterval(updateTimecode, 100);
+  }
 </script>
 </body>
 </html>
