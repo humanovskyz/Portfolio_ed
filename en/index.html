@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050506">
+  <title>Pedro Ryan — Video Editor</title>
+  <meta name="description" content="Portfolio of Pedro Ryan, video editor. Vertical editing, rhythm, storytelling, and visual polish.">
+  <link rel="canonical" href="https://humanovskyz.github.io/Portfolio_ed/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Pedro Ryan">
+  <meta property="og:url" content="https://humanovskyz.github.io/Portfolio_ed/">
+  <meta property="og:title" content="Pedro Ryan — Video Editor">
+  <meta property="og:description" content="Editing with rhythm, intention, and presence.">
+  <meta property="og:image" content="https://humanovskyz.github.io/Portfolio_ed/media/social-preview.png">
+  <meta property="og:image:secure_url" content="https://humanovskyz.github.io/Portfolio_ed/media/social-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Pedro Ryan — Video Editor">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pedro Ryan — Video Editor">
+  <meta name="twitter:description" content="Editing with rhythm, intention, and presence.">
+  <meta name="twitter:image" content="https://humanovskyz.github.io/Portfolio_ed/media/social-preview.png">
+  <meta name="twitter:image:alt" content="Pedro Ryan — Video Editor">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="media/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="media/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="media/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Pedro Ryan">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,ital,wght@6..96,400;6..96,500;6..96,600;6..96,700;6..96,400&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="media/castle-hero.png">
+
+  <style>
+    :root{
+      --bg:#050506;
+      --bg-soft:#0a0a0c;
+      --panel:#101013;
+      --paper:#f2efea;
+      --muted:#99979b;
+      --line:rgba(255,255,255,.11);
+      --line-strong:rgba(255,255,255,.2);
+      --red:#df241f;
+      --red-deep:#7d0d0a;
+      --serif:'Bodoni Moda', Georgia, serif;
+      --sans:'Manrope', Arial, sans-serif;
+      --mono:'JetBrains Mono', monospace;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html{ scroll-behavior:smooth; background:var(--bg); }
+    body{
+      min-height:100%; overflow-x:hidden; background:var(--bg); color:var(--paper);
+      font-family:var(--sans); font-weight:300; -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:''; position:fixed; inset:0; z-index:9998; pointer-events:none; opacity:.22;
+      background-image:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.035) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 73% 62%, rgba(255,255,255,.025) 0 1px, transparent 1.4px);
+      background-size:5px 5px, 7px 7px; mix-blend-mode:soft-light;
+    }
+    body.media-playing .hero::after{ animation-play-state:paused; }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+    img,video{ max-width:100%; }
+    ::selection{ background:var(--red); color:#fff; }
+
+    .skip-link{
+      position:fixed; left:18px; top:-80px; z-index:10001; padding:12px 18px;
+      background:var(--paper); color:var(--bg); border-radius:99px; transition:top .2s;
+    }
+    .skip-link:focus{ top:18px; }
+    :focus-visible{ outline:2px solid var(--red); outline-offset:4px; }
+
+    .scroll-progress{
+      position:fixed; top:0; left:0; right:0; z-index:1000; height:2px;
+      background:var(--red); transform:scaleX(0); transform-origin:left center;
+      will-change:transform;
+    }
+
+    .site-nav{
+      position:fixed; z-index:900; top:18px; left:50%; width:min(1180px,calc(100% - 34px));
+      transform:translateX(-50%); display:flex; align-items:center; justify-content:space-between;
+      padding:11px 12px 11px 18px; border:1px solid transparent; border-radius:999px;
+      transition:background .35s,border-color .35s,box-shadow .35s;
+    }
+    .site-nav.scrolled{
+      background:rgba(9,9,11,.62); border-color:var(--line);
+      -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+      box-shadow:0 16px 50px rgba(0,0,0,.28);
+    }
+    .nav-brand{ display:flex; align-items:center; gap:13px; }
+    .pr-mark{
+      position:relative; display:inline-flex; align-items:center; font-family:var(--serif);
+      font-weight:600; letter-spacing:-.18em; line-height:1; color:var(--paper);
+    }
+    .pr-mark .r{ color:var(--red); font-style:italic; transform:translateY(.04em); }
+    .nav-mark{ font-size:29px; width:43px; }
+    .nav-name{ font-family:var(--mono); font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:rgba(242,239,234,.72); }
+    .nav-links{ display:flex; align-items:center; gap:27px; }
+    .nav-links a{
+      position:relative; font-family:var(--mono); font-size:9px; letter-spacing:.14em;
+      text-transform:uppercase; color:rgba(242,239,234,.7); transition:color .25s;
+    }
+    .nav-links a:not(.nav-cta)::after{
+      content:''; position:absolute; left:0; right:100%; bottom:-6px; height:1px;
+      background:var(--red); transition:right .25s;
+    }
+    .nav-links a:hover{ color:var(--paper); }
+    .nav-links a:hover::after{ right:0; }
+    .nav-cta{
+      padding:11px 17px; border:1px solid rgba(255,255,255,.18); border-radius:999px;
+      background:rgba(255,255,255,.055); color:var(--paper)!important;
+    }
+    .nav-cta:hover{ background:var(--paper); color:var(--bg)!important; }
+
+    .hero{
+      position:relative; isolation:isolate; min-height:100svh; overflow:hidden;
+      display:flex; align-items:flex-end; padding:150px 5vw 54px;
+    }
+    .hero-media{
+      position:absolute; inset:-5%; z-index:-4; background:url('media/castle-hero.png') center 58%/cover no-repeat;
+      transform:scale(1.04); will-change:transform;
+    }
+    .hero::before{
+      content:''; position:absolute; inset:0; z-index:-3;
+      background:
+        linear-gradient(180deg,rgba(5,5,6,.26) 0%,rgba(5,5,6,.22) 35%,rgba(5,5,6,.9) 91%,var(--bg) 100%),
+        linear-gradient(90deg,rgba(5,5,6,.84) 0%,rgba(5,5,6,.22) 52%,rgba(5,5,6,.55) 100%);
+    }
+    .hero::after{
+      content:''; position:absolute; z-index:-2; width:min(52vw,720px); aspect-ratio:1;
+      left:44%; bottom:-28%; border-radius:50%; background:rgba(182,18,15,.18);
+      filter:blur(110px); animation:ambientPulse 7s ease-in-out infinite alternate;
+    }
+    @keyframes ambientPulse{ to{ transform:scale(1.14); opacity:.55; } }
+    .hero-grid{
+      width:min(1440px,100%); margin:0 auto; display:grid;
+      grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:52px;
+    }
+    .eyebrow{
+      font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+      color:rgba(242,239,234,.62);
+    }
+    .hero-kicker{ display:flex; align-items:center; gap:14px; margin-bottom:28px; }
+    .hero-kicker::before{ content:''; width:36px; height:1px; background:var(--red); }
+    .hero-title{
+      display:flex; flex-direction:column; font-family:var(--serif); font-weight:500;
+      font-size:clamp(74px,13vw,190px); line-height:.72; letter-spacing:-.07em;
+      text-transform:uppercase;
+    }
+    .hero-title span:last-child{ margin-left:.43em; color:transparent; -webkit-text-stroke:1px rgba(242,239,234,.68); }
+    .hero-bottom{
+      margin-top:42px; padding-top:22px; border-top:1px solid var(--line);
+      display:grid; grid-template-columns:minmax(0,520px) auto; align-items:end; gap:35px;
+    }
+    .hero-lead{ font-size:clamp(17px,1.55vw,22px); line-height:1.55; color:rgba(242,239,234,.76); }
+    .hero-actions{ display:flex; align-items:center; gap:12px; }
+    .button{
+      min-height:48px; padding:0 20px; border-radius:999px; display:inline-flex;
+      align-items:center; justify-content:center; gap:10px; border:1px solid var(--line-strong);
+      font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+      transition:transform .25s,background .25s,color .25s,border-color .25s;
+    }
+    .button:hover{ transform:translateY(-3px); }
+    .button-primary{ background:var(--red); border-color:var(--red); color:white; }
+    .button-primary:hover{ background:#f13a34; }
+    .button-ghost:hover{ background:var(--paper); color:var(--bg); border-color:var(--paper); }
+    .hero-sigil{
+      width:clamp(150px,18vw,260px); aspect-ratio:1; border:1px solid var(--line);
+      border-radius:50%; display:grid; place-items:center; background:rgba(5,5,6,.28);
+      -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+      box-shadow:inset 0 0 80px rgba(255,255,255,.025),0 20px 70px rgba(0,0,0,.32);
+    }
+    .hero-sigil .pr-mark{ font-size:clamp(72px,10vw,142px); width:1.12em; }
+
+    .section{ position:relative; padding:clamp(90px,12vw,170px) 5vw; }
+    .section-inner{ width:min(1240px,100%); margin:0 auto; }
+    .section-head{
+      display:grid; grid-template-columns:150px minmax(0,1fr); gap:40px;
+      align-items:start; margin-bottom:clamp(60px,8vw,110px);
+    }
+    .section-index{ color:var(--red); }
+    .section-title{
+      max-width:900px; font-family:var(--serif); font-weight:400;
+      font-size:clamp(44px,7vw,92px); letter-spacing:-.045em; line-height:.98;
+    }
+    .section-title em{ color:var(--red); font-weight:400; }
+
+    .work{ background:var(--bg); }
+    .project-list{ display:flex; flex-direction:column; gap:clamp(80px,12vw,170px); }
+    .project{
+      display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,420px);
+      gap:clamp(46px,8vw,120px); align-items:center;
+    }
+    .project.reverse{ grid-template-columns:minmax(280px,420px) minmax(0,1fr); }
+    .project.reverse .project-media{ order:-1; }
+    .project.wide{ grid-template-columns:minmax(280px,.72fr) minmax(0,1.28fr); }
+    .project-number{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--red); margin-bottom:24px; }
+    .project-label{
+      display:inline-flex; align-items:center; gap:9px; margin-bottom:19px; padding:8px 11px;
+      border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.035);
+      font-family:var(--mono); font-size:8px; letter-spacing:.13em; text-transform:uppercase; color:rgba(242,239,234,.64);
+    }
+    .project-label::before{ content:''; width:5px; height:5px; border-radius:50%; background:var(--red); box-shadow:0 0 13px var(--red); }
+    .project-title{ font-family:var(--serif); font-size:clamp(42px,5.6vw,76px); line-height:1; letter-spacing:-.04em; font-weight:500; }
+    .project-copy{ margin-top:25px; max-width:590px; color:var(--muted); font-size:16px; line-height:1.7; }
+    .project-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-top:29px; }
+    .project-tags span{
+      padding:8px 11px; border-bottom:1px solid var(--line-strong);
+      font-family:var(--mono); font-size:8px; letter-spacing:.13em; text-transform:uppercase; color:rgba(242,239,234,.68);
+    }
+    .project-external{
+      display:inline-flex; align-items:center; gap:10px; margin-top:28px; padding-bottom:7px;
+      color:var(--paper); border-bottom:1px solid rgba(223,36,31,.6);
+      font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+      transition:color .2s,border-color .2s;
+    }
+    .project-external:hover{ color:var(--red); border-color:var(--red); }
+    .project-media{ position:relative; width:min(100%,390px); justify-self:center; }
+    .project.wide .project-media{ width:100%; max-width:720px; }
+    .project-media::before{
+      content:''; position:absolute; inset:22px -22px -22px 22px; z-index:0;
+      border:1px solid rgba(223,36,31,.28); border-radius:30px;
+    }
+    .video-shell{
+      position:relative; z-index:1; aspect-ratio:9/16; overflow:hidden; border-radius:26px;
+      background:#09090a; border:1px solid var(--line); box-shadow:0 35px 100px rgba(0,0,0,.48);
+    }
+    .project-video{ display:block; width:100%; height:100%; object-fit:cover; background:#080809; }
+    .youtube-shell{ aspect-ratio:16/9; }
+    .youtube-thumb{ display:block; width:100%; height:100%; object-fit:cover; background:#080809; }
+    .youtube-frame{ position:absolute; inset:0; width:100%; height:100%; border:0; background:#080809; }
+    .video-cover{
+      position:absolute; inset:0; display:flex; align-items:flex-end; padding:20px;
+      background:linear-gradient(to top,rgba(3,3,4,.86),transparent 54%);
+      transition:opacity .2s,visibility 0s;
+    }
+    .video-shell.playing .video-cover{ opacity:0; visibility:hidden; pointer-events:none; transition:opacity .2s,visibility 0s .2s; }
+    .video-play{
+      width:100%; padding:9px 13px 9px 9px; border:1px solid rgba(255,255,255,.22);
+      border-radius:999px; color:white; background:rgba(7,7,8,.82); cursor:pointer;
+      display:flex; align-items:center; gap:12px; text-align:left;
+      transition:background .2s,border-color .2s,transform .2s;
+    }
+    .video-play:hover{ background:rgba(20,20,22,.96); border-color:rgba(255,255,255,.5); transform:translateY(-2px); }
+    .video-play:disabled{ cursor:wait; opacity:.7; transform:none; }
+    .play-icon{ width:41px; height:41px; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; background:var(--red); font-size:12px; padding-left:2px; }
+    .play-copy{ display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; }
+    .play-copy small{ font-size:8px; color:rgba(255,255,255,.52); }
+    .project-disclaimer{
+      margin-top:27px; padding:17px 18px; border-left:1px solid var(--red);
+      background:linear-gradient(90deg,rgba(223,36,31,.08),transparent);
+      color:rgba(242,239,234,.54); font-size:12px; line-height:1.6;
+    }
+
+    .manifesto{
+      min-height:86svh; display:grid; place-items:center; overflow:hidden;
+      border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+      background:
+        radial-gradient(circle at 72% 48%,rgba(140,11,9,.3),transparent 34%),
+        linear-gradient(145deg,#080809,#030304 70%);
+    }
+    .manifesto-inner{ width:min(1120px,90vw); position:relative; }
+    .manifesto-mark{
+      position:absolute; right:-.02em; top:50%; transform:translateY(-50%); z-index:0;
+      font-size:clamp(190px,34vw,520px)!important; opacity:.035;
+    }
+    .manifesto blockquote{
+      position:relative; z-index:1; max-width:970px; font-family:var(--serif);
+      font-size:clamp(48px,8vw,108px); line-height:.98; letter-spacing:-.05em;
+    }
+    .manifesto blockquote em{ color:var(--red); }
+    .manifesto cite{ display:block; margin-top:35px; font-style:normal; color:var(--muted); }
+
+    .about{
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.015),transparent 34%),
+        var(--bg-soft);
+    }
+    .about-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.7fr); gap:clamp(55px,9vw,130px); align-items:start; }
+    .about-copy h2{ font-family:var(--serif); font-size:clamp(50px,7.3vw,96px); line-height:.95; letter-spacing:-.05em; font-weight:500; }
+    .about-copy h2 em{ color:var(--red); }
+    .about-copy p{ max-width:650px; margin-top:30px; color:var(--muted); font-size:17px; line-height:1.75; }
+    .about-card{
+      position:relative; overflow:hidden; padding:33px; border:1px solid var(--line);
+      border-radius:26px; background:rgba(255,255,255,.035);
+      -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+    }
+    .about-card::after{ content:''; position:absolute; width:170px; height:170px; right:-75px; bottom:-85px; border-radius:50%; background:var(--red); filter:blur(70px); opacity:.22; }
+    .about-card .pr-mark{ font-size:75px; width:1.13em; margin:35px 0 54px; }
+    .about-card-row{ display:flex; justify-content:space-between; gap:20px; padding:14px 0; border-top:1px solid var(--line); font-family:var(--mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; }
+    .about-card-row span:last-child{ color:var(--muted); text-align:right; }
+
+    .process{ background:var(--bg); }
+    .process-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+    .process-card{
+      min-height:310px; padding:29px; display:flex; flex-direction:column; justify-content:space-between;
+      border:1px solid var(--line); border-radius:22px; background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.012));
+      transition:transform .35s,border-color .35s,background .35s;
+    }
+    .process-card:hover{ transform:translateY(-7px); border-color:rgba(223,36,31,.48); background:linear-gradient(145deg,rgba(223,36,31,.09),rgba(255,255,255,.015)); }
+    .process-card .num{ font-family:var(--mono); font-size:10px; color:var(--red); }
+    .process-card h3{ font-family:var(--serif); font-size:37px; font-weight:500; letter-spacing:-.035em; }
+    .process-card p{ margin-top:13px; color:var(--muted); line-height:1.65; font-size:14px; }
+
+    .contact{
+      position:relative; overflow:hidden; min-height:90svh; display:grid; place-items:center;
+      padding:120px 5vw 70px; border-top:1px solid var(--line);
+      background:radial-gradient(circle at 50% 72%,rgba(158,14,11,.28),transparent 38%),#030304;
+      text-align:center;
+    }
+    .contact::before{
+      content:'PR'; position:absolute; left:50%; top:48%; transform:translate(-50%,-50%);
+      font-family:var(--serif); font-size:min(52vw,760px); letter-spacing:-.18em;
+      color:rgba(255,255,255,.025); pointer-events:none;
+    }
+    .contact-inner{ position:relative; z-index:1; max-width:1050px; }
+    .contact h2{ margin-top:25px; font-family:var(--serif); font-size:clamp(60px,11vw,158px); line-height:.82; letter-spacing:-.065em; font-weight:500; }
+    .contact h2 em{ color:var(--red); }
+    .contact p{ max-width:590px; margin:35px auto; color:var(--muted); font-size:16px; line-height:1.65; }
+    .contact-link{
+      display:inline-flex; align-items:center; gap:14px; padding:17px 24px;
+      border:1px solid var(--line-strong); border-radius:999px; background:rgba(255,255,255,.035);
+      font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+      transition:background .25s,color .25s,transform .25s;
+    }
+    .contact-link::after{ content:'↗'; color:var(--red); font-size:15px; }
+    .contact-link:hover{ background:var(--paper); color:var(--bg); transform:translateY(-4px); }
+    footer{
+      position:absolute; bottom:24px; left:5vw; right:5vw; display:flex; justify-content:space-between;
+      color:rgba(242,239,234,.36); font-family:var(--mono); font-size:8px; letter-spacing:.12em; text-transform:uppercase;
+    }
+
+    .reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1); }
+    .reveal.in-view{ opacity:1; transform:none; }
+    .delay-1{ transition-delay:.08s; }
+    .delay-2{ transition-delay:.16s; }
+
+    .cursor-dot,.cursor-ring{ display:none; }
+    @media (hover:hover) and (pointer:fine){
+      body,.site-nav a,.button,.video-play,.contact-link{ cursor:none; }
+      .cursor-dot,.cursor-ring{ display:block; position:fixed; top:0; left:0; z-index:10000; pointer-events:none; border-radius:50%; opacity:0; }
+      .cursor-dot{ width:6px; height:6px; margin:-3px 0 0 -3px; background:var(--red); }
+      .cursor-ring{ width:34px; height:34px; margin:-17px 0 0 -17px; border:1px solid rgba(242,239,234,.58); transition:width .2s,height .2s,margin .2s,border-color .2s,background .2s,opacity .2s; }
+      .cursor-ring.active{ width:54px; height:54px; margin:-27px 0 0 -27px; border-color:var(--red); background:rgba(223,36,31,.08); }
+      .cursor-dot.visible,.cursor-ring.visible{ opacity:1; }
+    }
+
+    @media (max-width:900px){
+      .hero-grid{ grid-template-columns:1fr; }
+      .hero-sigil{ display:none; }
+      .hero-bottom{ grid-template-columns:1fr; }
+      .hero-actions{ justify-content:flex-start; flex-wrap:wrap; }
+      .section-head{ grid-template-columns:1fr; gap:18px; }
+      .project,.project.reverse,.project.wide{ grid-template-columns:1fr; }
+      .project.reverse .project-media{ order:initial; }
+      .project-media{ width:min(100%,350px); margin-top:10px; }
+      .about-grid{ grid-template-columns:1fr; }
+      .process-grid{ grid-template-columns:1fr; }
+      .process-card{ min-height:230px; }
+    }
+
+    @media (max-width:640px){
+      .site-nav{ top:10px; width:calc(100% - 20px); }
+      .nav-name{ display:none; }
+      .nav-links{ gap:13px; }
+      .nav-links a{ display:none; }
+      .nav-links .nav-cta{ display:inline-flex; }
+      .hero{ padding:130px 22px 42px; }
+      .hero-title{ font-size:clamp(70px,26vw,112px); line-height:.76; }
+      .hero-title span:last-child{ margin-left:.12em; }
+      .hero-bottom{ margin-top:34px; }
+      .hero-actions{ align-items:stretch; flex-direction:column; }
+      .button{ width:100%; }
+      .section{ padding-left:22px; padding-right:22px; }
+      .project-media::before{ inset:12px -12px -12px 12px; }
+      .contact{ padding-left:22px; padding-right:22px; }
+      footer{ flex-direction:column; align-items:center; gap:8px; }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      html{ scroll-behavior:auto; }
+      *,*::before,*::after{ animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; }
+      .reveal{ opacity:1; transform:none; transition:none; }
+      .hero-media{ transform:none!important; }
+      .cursor-dot,.cursor-ring{ display:none!important; }
+      body{ cursor:auto!important; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#conteudo">Skip to content</a>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <nav class="site-nav" id="siteNav" aria-label="Main navigation">
+    <a class="nav-brand" href="#top" aria-label="Pedro Ryan — home">
+      <span class="pr-mark nav-mark" aria-hidden="true"><span>P</span><span class="r">R</span></span>
+      <span class="nav-name">Pedro Ryan<br>Video Editor</span>
+    </a>
+    <div class="nav-links">
+      <a href="#trabalhos">Work</a>
+      <a href="#sobre">About</a>
+      <a href="#processo">Process</a>
+      <a class="nav-cta" href="#contato">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-media" id="heroMedia" aria-hidden="true"></div>
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow hero-kicker reveal">Video Editor / Brazil</p>
+        <h1 class="hero-title reveal delay-1"><span>Pedro</span><span>Ryan</span></h1>
+        <div class="hero-bottom reveal delay-2">
+          <p class="hero-lead">Editing with rhythm, intention, and presence. From the first cut to the last frame.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#trabalhos">View work <span aria-hidden="true">↓</span></a>
+            <a class="button button-ghost" href="#contato">Start a project</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-sigil reveal delay-2" aria-hidden="true">
+        <span class="pr-mark"><span>P</span><span class="r">R</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="section work" id="trabalhos">
+      <div class="section-inner">
+        <header class="section-head">
+          <p class="eyebrow section-index reveal">01 / Work</p>
+          <h2 class="section-title reveal delay-1">Pieces that turn attention into <em>presence.</em></h2>
+        </header>
+
+        <div class="project-list">
+          <article class="project">
+            <div class="project-info reveal">
+              <p class="project-number">PR — 001</p>
+              <span class="project-label">Demo work</span>
+              <h3 class="project-title">Vertical narrative</h3>
+              <p class="project-copy">Spoken-content editing focused on retention: precise cuts, visual inserts, captions, and pacing built for the vertical format.</p>
+              <div class="project-tags" aria-label="Project characteristics">
+                <span>Short form</span><span>Storytelling</span><span>Sound design</span>
+              </div>
+              <p class="project-disclaimer">Demo piece created for portfolio purposes. Does not represent a client engagement, commercial relationship, or endorsement by the person shown.</p>
+            </div>
+
+            <div class="project-media reveal delay-1">
+              <div class="video-shell">
+                <video class="project-video" src="media/projeto-editorial.mp4" poster="media/projeto-editorial-poster.jpg" playsinline preload="metadata" width="540" height="960" aria-label="Vertical editing demo work"></video>
+                <div class="video-cover">
+                  <button class="video-play" type="button" aria-label="Watch the demo work">
+                    <span class="play-icon" aria-hidden="true">▶</span>
+                    <span class="play-copy"><small>Project 01</small><span>Watch video</span></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="project reverse">
+            <div class="project-info reveal">
+              <p class="project-number">PR — 002</p>
+              <span class="project-label">Concept project</span>
+              <h3 class="project-title">Identity in motion</h3>
+              <p class="project-copy">Promotional film developed as an original exercise in branding, visual direction, and motion design for a fictional identity.</p>
+              <div class="project-tags" aria-label="Project characteristics">
+                <span>Motion</span><span>Brand film</span><span>Visual direction</span>
+              </div>
+              <p class="project-disclaimer"><strong>Fictional work for a fictional company.</strong> The brand shown in the video was created exclusively as a portfolio exercise and does not represent a real company or client.</p>
+            </div>
+
+            <div class="project-media reveal delay-1">
+              <div class="video-shell">
+                <video class="project-video" src="media/conceito-marca-ficticia.mp4" poster="media/conceito-marca-ficticia-poster.jpg" playsinline preload="metadata" width="540" height="960" aria-label="Concept project for a fictional brand"></video>
+                <div class="video-cover">
+                  <button class="video-play" type="button" aria-label="Watch the concept project">
+                    <span class="play-icon" aria-hidden="true">▶</span>
+                    <span class="play-copy"><small>Project 02</small><span>Watch video</span></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="project wide">
+            <div class="project-info reveal">
+              <p class="project-number">PR — 003</p>
+              <span class="project-label">Published on YouTube</span>
+              <h3 class="project-title">Where Is Everyone in Minecraft?</h3>
+              <p class="project-copy">Long-form project built for YouTube, focused on storytelling, pacing, atmosphere, and visual progression within the Minecraft universe.</p>
+              <div class="project-tags" aria-label="Project characteristics">
+                <span>Long form</span><span>Gaming</span><span>Storytelling</span>
+              </div>
+              <a class="project-external" href="https://www.youtube.com/watch?v=FORbewSgl-g" target="_blank" rel="noopener">Open on YouTube <span aria-hidden="true">↗</span></a>
+            </div>
+
+            <div class="project-media reveal delay-1">
+              <div class="video-shell youtube-shell" data-youtube-id="FORbewSgl-g" data-youtube-title="Where Is Everyone in Minecraft?">
+                <img class="youtube-thumb" src="https://i.ytimg.com/vi/FORbewSgl-g/maxresdefault.jpg" alt="Thumbnail for the video Where Is Everyone in Minecraft?" loading="lazy" width="1280" height="720">
+                <div class="video-cover">
+                  <button class="video-play youtube-play" type="button" aria-label="Watch Where Is Everyone in Minecraft?">
+                    <span class="play-icon" aria-hidden="true">▶</span>
+                    <span class="play-copy"><small>Project 03</small><span>Watch on site</span></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section manifesto">
+      <div class="manifesto-inner">
+        <span class="pr-mark manifesto-mark" aria-hidden="true"><span>P</span><span class="r">R</span></span>
+        <blockquote class="reveal">It's not about adding effects. It's about knowing <em>what to leave out.</em></blockquote>
+        <cite class="eyebrow reveal delay-1">Rhythm / clarity / intention</cite>
+      </div>
+    </section>
+
+    <section class="section about" id="sobre">
+      <div class="section-inner about-grid">
+        <div class="about-copy">
+          <p class="eyebrow section-index reveal">02 / About</p>
+          <h2 class="reveal delay-1">Pedro Ryan.<br><em>Editor by choice.</em></h2>
+          <p class="reveal delay-2">My work starts before the timeline: understanding what needs to be felt, where attention should land, and which image should stay. From there, every cut has a purpose.</p>
+        </div>
+        <aside class="about-card reveal delay-1">
+          <p class="eyebrow">Professional identity</p>
+          <span class="pr-mark" aria-hidden="true"><span>P</span><span class="r">R</span></span>
+          <div class="about-card-row"><span>Focus</span><span>Video editing</span></div>
+          <div class="about-card-row"><span>Formats</span><span>Vertical / commercial</span></div>
+          <div class="about-card-row"><span>Based in</span><span>Brazil</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section process" id="processo">
+      <div class="section-inner">
+        <header class="section-head">
+          <p class="eyebrow section-index reveal">03 / Process</p>
+          <h2 class="section-title reveal delay-1">Simple on the outside.<br><em>Precise on the inside.</em></h2>
+        </header>
+        <div class="process-grid">
+          <article class="process-card reveal">
+            <span class="num">01</span>
+            <div><h3>Direction</h3><p>Goal, audience, references, and feel defined before the first cut.</p></div>
+          </article>
+          <article class="process-card reveal delay-1">
+            <span class="num">02</span>
+            <div><h3>Build</h3><p>Selection, structure, pacing, captions, and sound design working together.</p></div>
+          </article>
+          <article class="process-card reveal delay-2">
+            <span class="num">03</span>
+            <div><h3>Finishing</h3><p>Review, adjustments, and delivery ready for the format it'll be published in.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contato">
+      <div class="contact-inner">
+        <p class="eyebrow reveal">Available for new projects</p>
+        <h2 class="reveal delay-1">Let's create something that <em>lasts.</em></h2>
+        <p class="reveal delay-2">Tell me what you have in mind. I'll respond with clear direction on how to turn the material into a video.</p>
+        <a class="contact-link reveal delay-2" href="https://www.instagram.com/pedroryan_111/" target="_blank" rel="noopener">Message on Instagram</a>
+      </div>
+      <footer>
+        <span>© 2026 Pedro Ryan</span>
+        <span>Video Editor / Brazil</span>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollProgress = document.getElementById('scrollProgress');
+    const siteNav = document.getElementById('siteNav');
+    const heroMedia = document.getElementById('heroMedia');
+    let scrollQueued = false;
+
+    function updateScroll(){
+      const y = window.scrollY;
+      const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      scrollProgress.style.transform = `scaleX(${Math.min(y / max, 1)})`;
+      siteNav.classList.toggle('scrolled', y > 28);
+      if (!reduceMotion && y < window.innerHeight * 1.25){
+        heroMedia.style.transform = `translate3d(0,${y * .1}px,0) scale(1.04)`;
+      }
+      scrollQueued = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!scrollQueued){
+        requestAnimationFrame(updateScroll);
+        scrollQueued = true;
+      }
+    }, { passive:true });
+    updateScroll();
+
+    const revealEls = document.querySelectorAll('.reveal');
+    if (!reduceMotion && 'IntersectionObserver' in window){
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting){
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold:.14, rootMargin:'0px 0px -5% 0px' });
+      revealEls.forEach(el => observer.observe(el));
+    } else {
+      revealEls.forEach(el => el.classList.add('in-view'));
+    }
+
+    const videoShells = document.querySelectorAll('.video-shell:not(.youtube-shell)');
+    videoShells.forEach(shell => {
+      const video = shell.querySelector('video');
+      const button = shell.querySelector('.video-play');
+      const label = button.querySelector('.play-copy span:last-child');
+      const originalLabel = label.textContent;
+
+      button.addEventListener('click', async () => {
+        videoShells.forEach(otherShell => {
+          const otherVideo = otherShell.querySelector('video');
+          if (otherVideo !== video && !otherVideo.paused) otherVideo.pause();
+        });
+        button.disabled = true;
+        label.textContent = 'Loading…';
+        video.controls = true;
+        try {
+          await video.play();
+        } catch (_) {
+          button.disabled = false;
+          label.textContent = originalLabel;
+          video.controls = false;
+        }
+      });
+
+      video.addEventListener('playing', () => {
+        button.disabled = false;
+        label.textContent = originalLabel;
+        shell.classList.add('playing');
+        document.body.classList.add('media-playing');
+      });
+      video.addEventListener('pause', () => {
+        document.body.classList.remove('media-playing');
+      });
+      video.addEventListener('ended', () => {
+        video.controls = false;
+        video.currentTime = 0;
+        shell.classList.remove('playing');
+        document.body.classList.remove('media-playing');
+      });
+    });
+
+    document.querySelectorAll('.youtube-shell').forEach(shell => {
+      const button = shell.querySelector('.youtube-play');
+      button.addEventListener('click', () => {
+        const frame = document.createElement('iframe');
+        frame.className = 'youtube-frame';
+        frame.src = `https://www.youtube-nocookie.com/embed/${shell.dataset.youtubeId}?autoplay=1&rel=0`;
+        frame.title = shell.dataset.youtubeTitle;
+        frame.loading = 'lazy';
+        frame.referrerPolicy = 'strict-origin-when-cross-origin';
+        frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        frame.allowFullscreen = true;
+        shell.replaceChildren(frame);
+        shell.classList.add('playing');
+      }, { once:true });
+    });
+
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorRing = document.getElementById('cursorRing');
+    if (window.matchMedia('(hover:hover) and (pointer:fine)').matches && !reduceMotion){
+      let targetX = innerWidth / 2, targetY = innerHeight / 2;
+      let ringX = targetX, ringY = targetY;
+      const interactive = 'a,button,video';
+
+      window.addEventListener('pointermove', event => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+        cursorDot.style.transform = `translate3d(${targetX}px,${targetY}px,0)`;
+        cursorDot.classList.add('visible');
+        cursorRing.classList.add('visible');
+        cursorRing.classList.toggle('active', Boolean(event.target.closest(interactive)));
+      }, { passive:true });
+      document.addEventListener('mouseleave', () => {
+        cursorDot.classList.remove('visible');
+        cursorRing.classList.remove('visible');
+      });
+      function animateCursor(){
+        ringX += (targetX - ringX) * .18;
+        ringY += (targetY - ringY) * .18;
+        cursorRing.style.transform = `translate3d(${ringX}px,${ringY}px,0)`;
+        requestAnimationFrame(animateCursor);
+      }
+      requestAnimationFrame(animateCursor);
+    }
+  </script>
+</body>
+</html>
